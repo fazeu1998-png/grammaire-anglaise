@@ -1,5 +1,5 @@
 /* ===================================================================
-   Moteur de l'application â€” navigation, quiz, audio, reconnaissance
+   Moteur de l'application — navigation, quiz, audio, reconnaissance
    vocale, sauvegarde de progression.
    =================================================================== */
 
@@ -49,8 +49,8 @@ function isModuleUnlocked(id){
 }
 
 /* ---------- Voix (TTS) ----------
-   Certaines WebView Android n'implÃ©mentent pas speechSynthesis : si l'app
-   mobile fournit un pont natif "AndroidTTS", on l'utilise en prioritÃ©.
+   Certaines WebView Android n'implémentent pas speechSynthesis : si l'app
+   mobile fournit un pont natif "AndroidTTS", on l'utilise en priorité.
    Sinon, repli sur l'API du navigateur (fonctionne dans Chrome). */
 const nativeTTS = (typeof AndroidTTS !== "undefined") ? AndroidTTS : null;
 let enVoice = null;
@@ -82,7 +82,7 @@ function speak(text, rate){
 const ttsSupported = !!nativeTTS || typeof speechSynthesis !== "undefined";
 
 /* ---------- Reconnaissance vocale (STT) ----------
-   MÃªme logique : pont natif "AndroidSTT" prioritaire (app mobile),
+   Même logique : pont natif "AndroidSTT" prioritaire (app mobile),
    sinon l'API SpeechRecognition du navigateur (Chrome uniquement). */
 const nativeSTT = (typeof AndroidSTT !== "undefined") ? AndroidSTT : null;
 const SpeechRecognitionCtor = window.SpeechRecognition || window.webkitSpeechRecognition || null;
@@ -103,7 +103,7 @@ function checkKeywordMatch(transcript, keywords){
   return { ratio, hits, ok: ratio >= 0.6 };
 }
 
-/* ---------- Ã‰tat de l'application ---------- */
+/* ---------- État de l'application ---------- */
 const state = {
   screen: "home",
   moduleId: null,
@@ -157,7 +157,7 @@ function startReview(){
     });
   });
   if(items.length === 0){
-    alert("Rien Ã  rÃ©viser pour le moment â€” bravo, aucune question ratÃ©e en attente !");
+    alert("Rien à réviser pour le moment — bravo, aucune question ratée en attente !");
     return;
   }
   state.screen = "quiz";
@@ -187,7 +187,7 @@ function renderHome(){
       const p = getModuleProgress(id);
       const unlocked = isModuleUnlocked(id);
       const pct = Math.round((p.bestScore||0)*100);
-      const badge = unlocked ? (p.passed ? "âœ…" : "ðŸ“˜") : "ðŸ”’";
+      const badge = unlocked ? (p.passed ? "✅" : "📘") : "🔒";
       html += `
       <div class="mod-card ${unlocked?"":"locked"}" data-mod="${id}">
         <div class="mod-badge ${p.passed?"done":unlocked?"":"locked"}">${badge}</div>
@@ -204,17 +204,17 @@ function renderHome(){
 
   html += `
     <div class="toggle-row">
-      <span>ðŸ”“ Tout dÃ©bloquer</span>
+      <span>🔓 Tout débloquer</span>
       <label class="switch">
         <input type="checkbox" id="unlockAllToggle" ${unlockAll?"checked":""}>
         <span class="slider"></span>
       </label>
     </div>
     <div class="toolbar">
-      <button class="btn btn-outline btn-full" id="reviewBtn">ðŸ” Mode rÃ©vision</button>
-      <button class="btn btn-outline btn-full" id="progressBtn">ðŸ“Š Progression globale</button>
+      <button class="btn btn-outline btn-full" id="reviewBtn">🔁 Mode révision</button>
+      <button class="btn btn-outline btn-full" id="progressBtn">📊 Progression globale</button>
     </div>
-    <footer class="appfoot">15 modules Â· progression sauvegardÃ©e sur ce tÃ©lÃ©phone</footer>
+    <footer class="appfoot">15 modules · progression sauvegardée sur ce téléphone</footer>
   `;
 
   appEl.innerHTML = html;
@@ -234,7 +234,7 @@ function renderHome(){
   document.getElementById("progressBtn").addEventListener("click", goProgress);
 }
 
-/* ---------- Rendu : dÃ©tail d'un module ---------- */
+/* ---------- Rendu : détail d'un module ---------- */
 function renderModule(){
   const mod = MODULES.find(m=>m.id===state.moduleId);
   headerTitleEl.textContent = mod.title;
@@ -242,21 +242,21 @@ function renderModule(){
 
   let html = `
     <div class="section-card">
-      <h3>ðŸ“– Explication</h3>
+      <h3>📖 Explication</h3>
       <p>${mod.explanation}</p>
     </div>
     <div class="section-card">
-      <h3>ðŸ”§ Comment construire la phrase</h3>
+      <h3>🔧 Comment construire la phrase</h3>
       <div class="formula-row"><span class="formula-tag">Affirmatif</span><span class="formula-text">${mod.formulas.affirmative}</span></div>
-      <div class="formula-row"><span class="formula-tag">NÃ©gatif</span><span class="formula-text">${mod.formulas.negative}</span></div>
+      <div class="formula-row"><span class="formula-tag">Négatif</span><span class="formula-text">${mod.formulas.negative}</span></div>
       <div class="formula-row"><span class="formula-tag">Question</span><span class="formula-text">${mod.formulas.interrogative}</span></div>
     </div>
     <div class="section-card">
-      <h3>ðŸ•’ Quand l'utiliser</h3>
+      <h3>🕒 Quand l'utiliser</h3>
       <ul>${mod.usage.map(u=>`<li>${u}</li>`).join("")}</ul>
     </div>
     <div class="section-card">
-      <h3>âš ï¸ Erreurs classiques des francophones</h3>
+      <h3>⚠️ Erreurs classiques des francophones</h3>
       <ul>${mod.mistakes.map(u=>`<li>${u}</li>`).join("")}</ul>
     </div>
   `;
@@ -264,7 +264,7 @@ function renderModule(){
   if(mod.irregularVerbs && mod.irregularVerbs.length){
     html += `
     <div class="section-card">
-      <h3>ðŸ“‹ Verbes irrÃ©guliers utiles</h3>
+      <h3>📋 Verbes irréguliers utiles</h3>
       <table class="irr-table">
         <tr><th>Base</th><th>Forme</th></tr>
         ${mod.irregularVerbs.map(([a,b])=>`<tr><td>${a}</td><td>${b}</td></tr>`).join("")}
@@ -273,25 +273,25 @@ function renderModule(){
   }
 
   if(!ttsSupported){
-    html += `<div class="warn-banner">ðŸ”‡ La lecture audio n'est pas disponible sur ce navigateur.</div>`;
+    html += `<div class="warn-banner">🔇 La lecture audio n'est pas disponible sur ce navigateur.</div>`;
   }
 
-  html += `<div class="section-card"><h3>ðŸ’¬ Exemples (touche ðŸ”Š pour Ã©couter)</h3></div>`;
+  html += `<div class="section-card"><h3>💬 Exemples (touche 🔊 pour écouter)</h3></div>`;
   mod.examples.forEach((ex,i)=>{
     html += `
     <div class="example-card" style="display:flex;align-items:center;gap:10px;">
       <div style="flex:1;">
         <div class="example-en">${ex.en}</div>
         <div class="example-fr">${ex.fr}</div>
-        <div class="example-pron">ðŸ—£ï¸ ${ex.pron}</div>
+        <div class="example-pron">🗣️ ${ex.pron}</div>
       </div>
-      <button class="audio-btn" data-say="${encodeURIComponent(ex.en)}">ðŸ”Š</button>
+      <button class="audio-btn" data-say="${encodeURIComponent(ex.en)}">🔊</button>
     </div>`;
   });
 
   html += `
     <div class="toolbar">
-      <button class="btn btn-primary btn-full btn-lg" id="startQuizBtn">ðŸ“ Commencer le quiz (${(QUIZZES[mod.id]||[]).length} questions)</button>
+      <button class="btn btn-primary btn-full btn-lg" id="startQuizBtn">📝 Commencer le quiz (${(QUIZZES[mod.id]||[]).length} questions)</button>
     </div>
   `;
 
@@ -308,7 +308,7 @@ let recognitionInstance = null;
 function renderQuiz(){
   const total = state.quizQuestions.length;
   const q = state.quizQuestions[state.quizIndex];
-  const title = state.reviewMode ? "Mode rÃ©vision" : MODULES.find(m=>m.id===state.moduleId).title;
+  const title = state.reviewMode ? "Mode révision" : MODULES.find(m=>m.id===state.moduleId).title;
   headerTitleEl.textContent = title;
   backBtnEl.style.visibility = "visible";
 
@@ -320,20 +320,20 @@ function renderQuiz(){
     html += q.options.map((opt,i)=>`<button class="opt-btn" data-i="${i}">${opt}</button>`).join("");
   } else if(q.type === "fill"){
     html += `<div class="quiz-sentence">${q.sentence}</div>`;
-    html += `<input type="text" class="fill-input" id="fillInput" placeholder="Ã‰cris ta rÃ©ponse ici" autocomplete="off" autocapitalize="off">`;
-    html += `<div class="toolbar"><button class="btn btn-primary btn-full" id="checkFillBtn">VÃ©rifier</button></div>`;
+    html += `<input type="text" class="fill-input" id="fillInput" placeholder="Écris ta réponse ici" autocomplete="off" autocapitalize="off">`;
+    html += `<div class="toolbar"><button class="btn btn-primary btn-full" id="checkFillBtn">Vérifier</button></div>`;
   } else if(q.type === "reorder"){
     html += `<div class="reorder-answer" id="reorderAnswer"></div>`;
     html += `<div class="reorder-bank" id="reorderBank"></div>`;
-    html += `<div class="toolbar"><button class="btn btn-outline" id="reorderResetBtn">â†©ï¸ Recommencer</button><button class="btn btn-primary" id="reorderCheckBtn">VÃ©rifier</button></div>`;
+    html += `<div class="toolbar"><button class="btn btn-outline" id="reorderResetBtn">↩️ Recommencer</button><button class="btn btn-primary" id="reorderCheckBtn">Vérifier</button></div>`;
   } else if(q.type === "oral"){
     html += `<div class="mic-area">`;
     if(!sttSupported){
-      html += `<div class="warn-banner">ðŸŽ™ï¸ La reconnaissance vocale n'est pas disponible sur ce navigateur (fonctionne surtout sur Chrome). Ã‰coute la phrase, rÃ©pÃ¨te-la Ã  voix haute pour t'entraÃ®ner, puis continue.</div>`;
-      html += `<div class="toolbar"><button class="btn btn-outline btn-full" id="oralListenBtn">ðŸ”Š Ã‰couter la phrase attendue</button></div>`;
-      html += `<div class="toolbar"><button class="btn btn-primary btn-full" id="oralSkipBtn">J'ai essayÃ©, continuer</button></div>`;
+      html += `<div class="warn-banner">🎙️ La reconnaissance vocale n'est pas disponible sur ce navigateur (fonctionne surtout sur Chrome). Écoute la phrase, répète-la à voix haute pour t'entraîner, puis continue.</div>`;
+      html += `<div class="toolbar"><button class="btn btn-outline btn-full" id="oralListenBtn">🔊 Écouter la phrase attendue</button></div>`;
+      html += `<div class="toolbar"><button class="btn btn-primary btn-full" id="oralSkipBtn">J'ai essayé, continuer</button></div>`;
     } else {
-      html += `<button class="mic-btn" id="micBtn">ðŸŽ™ï¸</button><div class="mic-label" id="micLabel">Touche le micro et dis ta rÃ©ponse en anglais</div>`;
+      html += `<button class="mic-btn" id="micBtn">🎙️</button><div class="mic-label" id="micLabel">Touche le micro et dis ta réponse en anglais</div>`;
       html += `<div id="heardBox"></div>`;
     }
     html += `</div>`;
@@ -353,12 +353,12 @@ function finishQuestion(correct, q){
   } else {
     state.quizMissed.push({ modId: q._modId, idx: q._idx });
   }
-  const nextLabel = (state.quizIndex+1 < state.quizQuestions.length) ? "Suivant â–¶" : "Voir les rÃ©sultats â–¶";
+  const nextLabel = (state.quizIndex+1 < state.quizQuestions.length) ? "Suivant ▶" : "Voir les résultats ▶";
   const fb = document.getElementById("feedbackArea");
   fb.innerHTML = `
     <div class="feedback ${correct?"ok":"ko"}">
-      <b>${correct ? "âœ… Bonne rÃ©ponse !" : "âŒ Pas tout Ã  fait."}</b>
-      ${!correct ? `RÃ©ponse attendue : <i>${q.answer || q.expected}</i>` : ""}
+      <b>${correct ? "✅ Bonne réponse !" : "❌ Pas tout à fait."}</b>
+      ${!correct ? `Réponse attendue : <i>${q.answer || q.expected}</i>` : ""}
       ${q.explain ? `<br>${q.explain}` : ""}
     </div>
     <div class="toolbar"><button class="btn btn-primary btn-full btn-lg" id="nextBtn">${nextLabel}</button></div>
@@ -382,9 +382,9 @@ function finishQuiz(){
   const score = state.quizScore;
 
   if(state.reviewMode){
-    // Pour chaque module prÃ©sent dans cette session de rÃ©vision : on retire de
-    // sa liste "ratÃ©es" toutes les questions qui viennent d'Ãªtre retestÃ©es,
-    // puis on rÃ©-ajoute seulement celles ratÃ©es Ã  nouveau cette fois-ci.
+    // Pour chaque module présent dans cette session de révision : on retire de
+    // sa liste "ratées" toutes les questions qui viennent d'être retestées,
+    // puis on ré-ajoute seulement celles ratées à nouveau cette fois-ci.
     const roundByModule = {};
     state.quizQuestions.forEach(q=>{
       (roundByModule[q._modId] = roundByModule[q._modId] || new Set()).add(q._idx);
@@ -514,20 +514,20 @@ function setupOral(q){
 
   function onHeard(transcript){
     const match = checkKeywordMatch(transcript, q.keywords || []);
-    heardBox.innerHTML = `<div class="heard-box">Tu as dit : Â« ${transcript} Â»</div>`;
+    heardBox.innerHTML = `<div class="heard-box">Tu as dit : « ${transcript} »</div>`;
     micBtn.classList.remove("listening");
-    micLabel.textContent = "Touche le micro pour rÃ©essayer";
+    micLabel.textContent = "Touche le micro pour réessayer";
     if(match.ok){
       finishQuestion(true, q);
     } else {
       heardBox.innerHTML += `
-        <div class="feedback ko"><b>Pas tout Ã  fait reconnu.</b> RÃ©ponse attendue : <i>${q.expected}</i></div>
+        <div class="feedback ko"><b>Pas tout à fait reconnu.</b> Réponse attendue : <i>${q.expected}</i></div>
         <div class="toolbar">
-          <button class="btn btn-outline btn-full" id="oralListenExpected">ðŸ”Š Ã‰couter la bonne rÃ©ponse</button>
+          <button class="btn btn-outline btn-full" id="oralListenExpected">🔊 Écouter la bonne réponse</button>
         </div>
         <div class="toolbar">
-          <button class="btn btn-outline btn-full" id="oralRetryBtn">ðŸ” RÃ©essayer</button>
-          <button class="btn btn-primary btn-full" id="oralGiveUpBtn">Continuer quand mÃªme</button>
+          <button class="btn btn-outline btn-full" id="oralRetryBtn">🔁 Réessayer</button>
+          <button class="btn btn-primary btn-full" id="oralGiveUpBtn">Continuer quand même</button>
         </div>
       `;
       document.getElementById("oralListenExpected").addEventListener("click", ()=> speak(q.expected));
@@ -540,15 +540,15 @@ function setupOral(q){
     micBtn.classList.remove("listening");
     let msg = "Une erreur est survenue avec le micro.";
     if(errorCode === "not-allowed" || errorCode === "service-not-allowed" || errorCode === "permission-denied"){
-      msg = "ðŸš« Le micro n'est pas autorisÃ©. VÃ©rifie les permissions du site (ou de l'application) puis rÃ©essaie.";
+      msg = "🚫 Le micro n'est pas autorisé. Vérifie les permissions du site (ou de l'application) puis réessaie.";
     } else if(errorCode === "no-speech"){
-      msg = "Je n'ai rien entendu. RÃ©essaie en parlant un peu plus fort.";
+      msg = "Je n'ai rien entendu. Réessaie en parlant un peu plus fort.";
     } else if(errorCode === "network"){
-      msg = "ProblÃ¨me rÃ©seau avec la reconnaissance vocale. VÃ©rifie ta connexion internet.";
+      msg = "Problème réseau avec la reconnaissance vocale. Vérifie ta connexion internet.";
     }
     heardBox.innerHTML = `<div class="warn-banner">${msg}</div>
-      <div class="toolbar"><button class="btn btn-primary btn-full" id="oralGiveUpBtn2">Continuer sans rÃ©ponse orale</button></div>`;
-    micLabel.textContent = "Touche le micro pour rÃ©essayer";
+      <div class="toolbar"><button class="btn btn-primary btn-full" id="oralGiveUpBtn2">Continuer sans réponse orale</button></div>`;
+    micLabel.textContent = "Touche le micro pour réessayer";
     const giveUp = document.getElementById("oralGiveUpBtn2");
     if(giveUp) giveUp.addEventListener("click", ()=> finishQuestion(false, q));
   }
@@ -558,7 +558,7 @@ function setupOral(q){
 
     if(nativeSTT){
       micBtn.classList.add("listening");
-      micLabel.textContent = "ðŸŽ™ï¸ Ã‰coute en cours... parle maintenant";
+      micLabel.textContent = "🎙️ Écoute en cours... parle maintenant";
       heardBox.innerHTML = "";
       window.__sttCallback = function(event, data){
         if(event === "start"){
@@ -575,7 +575,7 @@ function setupOral(q){
         nativeSTT.start();
       }catch(e){
         micBtn.classList.remove("listening");
-        heardBox.innerHTML = `<div class="warn-banner">Impossible de dÃ©marrer le micro.</div>`;
+        heardBox.innerHTML = `<div class="warn-banner">Impossible de démarrer le micro.</div>`;
       }
       return;
     }
@@ -585,7 +585,7 @@ function setupOral(q){
     try{
       rec = new SpeechRecognitionCtor();
     }catch(e){
-      heardBox.innerHTML = `<div class="warn-banner">Impossible de dÃ©marrer le micro sur ce navigateur.</div>`;
+      heardBox.innerHTML = `<div class="warn-banner">Impossible de démarrer le micro sur ce navigateur.</div>`;
       return;
     }
     recognitionInstance = rec;
@@ -594,7 +594,7 @@ function setupOral(q){
     rec.maxAlternatives = 1;
 
     micBtn.classList.add("listening");
-    micLabel.textContent = "ðŸŽ™ï¸ Ã‰coute en cours... parle maintenant";
+    micLabel.textContent = "🎙️ Écoute en cours... parle maintenant";
     heardBox.innerHTML = "";
 
     rec.onresult = (event)=>{
@@ -610,30 +610,30 @@ function setupOral(q){
       rec.start();
     }catch(e){
       micBtn.classList.remove("listening");
-      heardBox.innerHTML = `<div class="warn-banner">Impossible de dÃ©marrer le micro.</div>`;
+      heardBox.innerHTML = `<div class="warn-banner">Impossible de démarrer le micro.</div>`;
     }
   });
 }
 
-/* ---------- Rendu : rÃ©sultats ---------- */
+/* ---------- Rendu : résultats ---------- */
 function renderResult(){
   const total = state.quizQuestions.length;
   const score = state.quizScore;
   const ratio = total ? score/total : 0;
   const pct = Math.round(ratio*100);
   const passed = ratio >= PASS_THRESHOLD;
-  headerTitleEl.textContent = "RÃ©sultats";
+  headerTitleEl.textContent = "Résultats";
   backBtnEl.style.visibility = "visible";
 
   let html = `
     <div class="result-score">
       <div class="big">${score} / ${total}</div>
-      <div class="sub">${pct}% de bonnes rÃ©ponses</div>
-      ${!state.reviewMode ? `<div class="pass-pill ${passed?"pass":"fail"}">${passed ? "âœ… Module rÃ©ussi !" : "RÃ©essaie pour dÃ©bloquer la suite (70% requis)"}</div>` : ""}
+      <div class="sub">${pct}% de bonnes réponses</div>
+      ${!state.reviewMode ? `<div class="pass-pill ${passed?"pass":"fail"}">${passed ? "✅ Module réussi !" : "Réessaie pour débloquer la suite (70% requis)"}</div>` : ""}
     </div>
     <div class="toolbar">
-      ${!state.reviewMode ? `<button class="btn btn-outline btn-full" id="retryBtn">ðŸ” Refaire ce quiz</button>` : ""}
-      <button class="btn btn-primary btn-full" id="homeBtn2">ðŸ  Retour Ã  l'accueil</button>
+      ${!state.reviewMode ? `<button class="btn btn-outline btn-full" id="retryBtn">🔁 Refaire ce quiz</button>` : ""}
+      <button class="btn btn-primary btn-full" id="homeBtn2">🏠 Retour à l'accueil</button>
     </div>
   `;
   appEl.innerHTML = html;
@@ -655,7 +655,7 @@ function renderProgress(){
   let html = `
     <div class="result-score">
       <div class="big">${passedCount} / ${total}</div>
-      <div class="sub">modules rÃ©ussis Â· moyenne ${avg}%</div>
+      <div class="sub">modules réussis · moyenne ${avg}%</div>
     </div>
   `;
   MODULES.forEach(m=>{
@@ -663,7 +663,7 @@ function renderProgress(){
     const pct = Math.round((p.bestScore||0)*100);
     html += `
       <div class="mod-card">
-        <div class="mod-badge ${p.passed?"done":""}">${p.passed?"âœ…":"ðŸ“˜"}</div>
+        <div class="mod-badge ${p.passed?"done":""}">${p.passed?"✅":"📘"}</div>
         <div class="mod-info">
           <div class="mod-title">${m.title}</div>
           <div class="progress-bar-track"><div class="progress-bar-fill" style="width:${pct}%"></div></div>
